@@ -66,18 +66,51 @@ class Ransac():
 
     def __init__(self):
         self.threshold = 2 # a number that is not too small or too large
-        self.bestModel = 0
-        self.maxInliers = 0
-        self.inlierCount = 0
+        
     
-    def calc(self):
+    def calc(self, oldList, newList):
         """
-            find the optimal movement in the x and y direction
+            find the optimal movement in the x and y direction 
+            and return it
         """
-        pass
+
+        direction, pointList, size = self.pre_operation(oldList, newList)
+
+        bestModel = 0
+        maxInliers = 0
+        inlierCount = 0
+        currCount = 0
+        sampleCount = 6     #the number of sample you are testings to determine the optimal change in movement/flow
+                            #the higher the number the better the accuracy but comes at the cost of lower frame rate
+        sampleList = []
+
+        while currCount < sampleCount:
+            index = random.randint(0,size - 1)
+            if(sampleList.__contains__(index) == False):
+                sampleCount.append(index)
+                currCount += 1
+        
+        #find the optimal movement/flow
+        # dist_1 magnitude of movement of a point in the current sample,
+        #  while dist_2 is the magnitude of movement from a point in the testing list
+        for index in sampleList:
+            dist_1,_,_ = pointList[index]
+            for item in pointList:
+                dist_2,_,_ = item
+                diff = abs(dist_1-dist_2)       #get the absolute difference
+                if diff < threshold:
+                    inlierCount = inlierCount + 1
+            if maxInliers < inlierCount:
+                maxInliers = inlierCount
+                bestModel = index
+            
+            inlierCount = 0
+        _, delta_x, delta_y = pointList[index]
+        return delta_x, delta_y
 
     
-    def getDirection(oldList, newList):
+    
+    def pre_operation(oldList, newList):
         """
             look at all the points and determine the direction of movement
             ***This function is not optimized thus reduces the frame rate signifcantly
