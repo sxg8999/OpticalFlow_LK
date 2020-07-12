@@ -91,7 +91,7 @@ class Ransac():
                 currCount += 1
         
         #find the optimal movement/flow
-        # dist_1 magnitude of movement of a point in the current sample,
+        # dist_1 is the magnitude of movement of a point in the current sample,
         #  while dist_2 is the magnitude of movement from a point in the testing list
         for index in sampleList:
             dist_1,_,_ = pointList[index]
@@ -105,7 +105,7 @@ class Ransac():
                 bestModel = index
             
             inlierCount = 0
-        _, delta_x, delta_y = pointList[index]
+        _, delta_x, delta_y = pointList[bestModel]
         return delta_x, delta_y
 
     
