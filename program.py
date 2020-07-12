@@ -69,6 +69,82 @@ class Ransac():
         self.bestModel = 0
         self.maxInliers = 0
         self.inlierCount = 0
+    
+    def calc(self):
+        """
+            find the optimal movement in the x and y direction
+        """
+        pass
+
+    
+    def getDirection(oldList, newList):
+        """
+            look at all the points and determine the direction of movement
+            ***This function is not optimized thus reduces the frame rate signifcantly
+        """
+        counter_dict = {"UPLEFT":0, "UPRIGHT":0, "DOWNLEFT":0, "DOWNRIGHT":0, "DOWN":0, "UP":0, "LEFT":0, "RIGHT":0}
+        list_dict = {"UPLEFT":[], "UPRIGHT":[], "DOWNLEFT":[], "DOWNRIGHT":[], "DOWN":[], "UP":[], "LEFT":[], "RIGHT":[]}
+
+        for (p0,p1) in zip(oldList, newList):
+            x0,y0 = p0.ravel()
+            x1, y1 = p1.ravel()
+            diff_x = x1 - x0
+            diff_y = y1 - y0
+            #compute distance between the old point and the new point
+            #a^2 + b^2
+            # sum_of_sqdiff = math.pow(diff_x,2) + math.pow(diff_y,2) 
+            sum_of_sqdiff = (diff_x * diff_x) + (diff_y * diff_y)
+            distance = math.sqrt(sum_of_sqdiff)
+
+            #create a tuple containing the distance between old point and new point and
+            #also the deltas(change) for x and y
+            tmpTuple = (distance, diff_x, diff_y)
+
+            direction_str = ""
+            if diff_y < 0:
+                direction_str = direction_str + "UP"
+            elif diff_y > 0:
+                direction_str = direction_str + "DOWN"
+            
+            if diff_x < 0:
+                direction_str = direction_str + "LEFT"
+            elif diff_x > 0:
+                direction_str = direction_str + "RIGHT"
+            
+            if(direction_str != ""):
+                counter_dict[direction_str] += 1
+                list_dict[direction_str].append(tmpTuple)
+
+         #Use the results and formulate a best guess for the general direction
+
+        #criteria:
+        # - best guess for general direction is the direction with atleast 60 percent confidence rating
+        # - if no direction meets this criteria then the general direction is NONE ( no movement )
+
+        confidence_target = 0.60
+
+        #find the total
+        total = 0
+        max_count = 0
+        best_guess = ""
+        for key in counter_dict:
+            val = counter_dict[key]
+            total += val
+            if max_count < val:
+                max_count = val
+                best_guess = key
+
+        # check confidence rating
+        confidence_rating = 0.0
+        if total != 0:
+            confidence_rating = max_count/total
+        
+        if(confidence_rating >= confidence_target):
+            return best_guess, list_dict[best_guess], counter_dict[best_guess]
+        
+        return "NONE", [], 0   
+        
+
 
     
 
