@@ -5,6 +5,14 @@
 #
 
 import math
+import time
+import cv2
+import mss
+import numpy as np
+import random
+
+
+
 # The Point_Generator class generates and holds the points (static and moving) 
 class Point_Generator():
 
@@ -33,10 +41,26 @@ class Point_Generator():
                 # print(str(x) + ", " + str(y))
                 self.static_point.append((x,y))
                 self.moving_points.append([[x,y]])
-    
-        
 
-    
+        self.isPointGenerated = True
+
+
+class Computer(cv2):
+
+    def __init__(self):
+
+        #setup LucasKanade parameters
+        self.lkParams = dict( winSize  = (15,15),
+                  maxLevel = 5,
+                  criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
+
+
+    def calc(self):
+        """
+            calculates the optical flow using Lucas Kanade and a modified RANSAC operation
+        """
+        pass
+
 
 
 
