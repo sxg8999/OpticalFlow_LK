@@ -61,6 +61,19 @@ class Computer(cv2):
         """
         pass
 
+class Ransac():
+
+
+    def __init__(self):
+        self.threshold = 2 # a number that is not too small or too large
+        self.bestModel = 0
+        self.maxInliers = 0
+        self.inlierCount = 0
+
+    
+
+
+
 
 
 
