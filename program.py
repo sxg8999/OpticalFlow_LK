@@ -62,10 +62,6 @@ class Computer(cv2):
         pass
 
 class Ransac():
-
-
-    def __init__(self):
-        self.threshold = 2 # a number that is not too small or too large
         
     
     def calc(self, oldList, newList):
@@ -75,7 +71,7 @@ class Ransac():
         """
 
         direction, pointList, size = self.pre_operation(oldList, newList)
-
+        threshold = 2 # a number that is not too small or too large
         bestModel = 0
         maxInliers = 0
         inlierCount = 0
@@ -177,12 +173,6 @@ class Ransac():
         
         return "NONE", [], 0   
         
-
-
-    
-
-
-
 
 
 
