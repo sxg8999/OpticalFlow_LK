@@ -13,18 +13,18 @@ import random
 
 
 
-# The Point_Generator class generates and holds the points (static and moving) 
-class Point_Generator():
-
-    def __init__(self):
-       self.static_points = []
-       self.moving_points = []
-       self.isPointGenerated = False
+# The Point_Generator class generates the points of interest
+# Other methods of generating points of interest can be used too
+class PointGenerator():
     
     def create_grid(self, side_length, center_point):
         """
         create a grid of points with the center_point at the center of the grid
         """
+
+        static_points = []
+        moving_points = []
+
         half_len = math.floor(side_length/2)
         c_x,c_y = center_point
         top_left_x = c_x - half_len
