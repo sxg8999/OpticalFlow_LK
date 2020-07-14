@@ -47,7 +47,7 @@ class PointGenerator():
         
 
 
-class Computer(cv2):
+class Computer():
 
     def __init__(self):
 
@@ -61,7 +61,10 @@ class Computer(cv2):
         """
             calculates the optical flow using Lucas Kanade and a modified RANSAC operation
         """
-        newPoints, status, error = calc
+
+        newPoints,_,_ = cv2.calcOpticalFlowPyrLK(oldGrayFrame, newGrayFrame, points, None, **self.lkParams)
+        return Ransac.calc(points, newPoints)
+        
         
 
 class Ransac():
@@ -182,6 +185,9 @@ class Ransac():
 def main():
 
     pg = Point_Generator()
+    
+    
+    
     
     
 
