@@ -20,6 +20,7 @@ class PointGenerator():
     def create_grid(self, side_length, center_point):
         """
         create a grid of points with the center_point at the center of the grid
+        and return it
         """
 
         static_points = []
@@ -39,10 +40,11 @@ class PointGenerator():
                 y = top_left_y + (i*offset)
 
                 # print(str(x) + ", " + str(y))
-                self.static_point.append((x,y))
-                self.moving_points.append([[x,y]])
+                static_point.append((x,y))
+                moving_points.append([[x,y]])
 
-        self.isPointGenerated = True
+        return static_points, moving_points
+        
 
 
 class Computer(cv2):
@@ -55,11 +57,12 @@ class Computer(cv2):
                   criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
 
 
-    def calc(self):
+    def calc(self, oldGrayFrame, newGrayFrame, points):
         """
             calculates the optical flow using Lucas Kanade and a modified RANSAC operation
         """
-        pass
+        newPoints, status, error = calc
+        
 
 class Ransac():
         
@@ -179,7 +182,7 @@ class Ransac():
 def main():
 
     pg = Point_Generator()
-
+    
     
 
 
