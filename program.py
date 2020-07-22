@@ -65,6 +65,7 @@ class Computer():
         newPoints,_,_ = cv2.calcOpticalFlowPyrLK(oldGrayFrame, newGrayFrame, points, None, **self.lkParams)
         return Ransac.calc(points, newPoints)
         
+
         
 
 class Ransac():
@@ -180,6 +181,11 @@ class Ransac():
         return "NONE", [], 0   
         
 
+
+class Frames():
+
+    def __init__():
+        pass
 
 
 def main():
