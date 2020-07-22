@@ -184,8 +184,26 @@ class Ransac():
 
 class Frames():
 
-    def __init__():
-        pass
+    def __init__(self):
+        self.screen_grabber = mss.mss()
+        self.window_size = {"top": 140, "left": 560, "width": 800, "height": 800} 
+        self.old_frame = np.array(self.screen_grabber(self.window_size))
+        self.old_gray_frame = cv2.cvtColor(old_frame, cv2.COLOR_BGR2GRAY)
+        
+    
+    def update(self):
+        """
+        updates the old frame with the new frame
+        """
+        self.old_gray_frame = self.new_gray_frame.copy()
+    
+    def  getNext(self):
+        """
+        grab another frame
+        """
+        self.new_frame = np.array(self.screen_grabber(self.window_size))
+        self.new_gray_frame = cv2.cvtColor(new_frame, cv2.COLOR_BGR2GRAY)
+
 
 
 def main():
