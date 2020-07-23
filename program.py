@@ -191,7 +191,7 @@ class Frames():
         self.old_gray_frame = cv2.cvtColor(old_frame, cv2.COLOR_BGR2GRAY)
         
     
-    def update(self):
+    def update_old(self):
         """
         updates the old frame with the new frame
         """
@@ -205,10 +205,22 @@ class Frames():
         self.new_gray_frame = cv2.cvtColor(new_frame, cv2.COLOR_BGR2GRAY)
 
 
+class Application():
+
+    def __init__(self):
+        pass
+
+    def run(self):
+        pass
+
+
 
 def main():
 
     pg = Point_Generator()
+
+    
+
     
     
     
