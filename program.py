@@ -78,7 +78,14 @@ class Ransac():
             and return it
         """
 
+        # size: is the amount of points that are going in the same general direction
         direction, pointList, size = self.pre_operation(oldList, newList)
+
+        #if there is not enough points to determine a general directions
+        #then consider there to be no change between the two frames
+        if direction == "NONE" or size < 50:
+            return 0, 0
+
         threshold = 2 # a number that is not too small or too large
         bestModel = 0
         maxInliers = 0
