@@ -43,7 +43,7 @@ class PointGenerator():
                 static_points.append((x,y))
                 moving_points.append([[x,y]])
 
-        return static_points, moving_points
+        return static_points, np.array(moving_points, dtype = np.float32)
         
 
 
@@ -55,15 +55,16 @@ class Computer():
         self.lkParams = dict( winSize  = (15,15),
                   maxLevel = 5,
                   criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
-
+        
+        self.ransac = Ransac()
 
     def calc(self, oldGrayFrame, newGrayFrame, points):
         """
             calculates the optical flow using Lucas Kanade and a modified RANSAC operation
         """
 
-        newPoints,_,_ = cv2.calcOpticalFlowPyrLK(oldGrayFrame, newGrayFrame, points, None, **self.lkParams)
-        delta_x, delta_y = Ransac.calc(points, newPoints)
+        newPoints,status,error = cv2.calcOpticalFlowPyrLK(oldGrayFrame, newGrayFrame, points, None, **(self.lkParams))
+        delta_x, delta_y = self.ransac.calc(points, newPoints)
         return newPoints, delta_x, delta_y
         
 
@@ -98,7 +99,7 @@ class Ransac():
         while currCount < sampleCount:
             index = random.randint(0,size - 1)
             if(sampleList.__contains__(index) == False):
-                sampleCount.append(index)
+                sampleList.append(index)
                 currCount += 1
         
         #find the optimal movement/flow
@@ -121,7 +122,7 @@ class Ransac():
 
     
     
-    def pre_operation(oldList, newList):
+    def pre_operation(self, oldList, newList):
         """
             look at all the points and determine the direction of movement
             ***This function is not optimized thus reduces the frame rate signifcantly
@@ -222,7 +223,20 @@ class Frames():
         #defining the corners to form the info box
         top_corner = (600,600)
         bottom_corner = (750,800)
-        self.new_frame = cv2.rectangle(top_corner,bottom_corner,(0,255,0), 3)
+        self.new_frame = cv2.rectangle(self.new_frame, top_corner,bottom_corner,(0,255,0), 3)
+
+
+        #create a static point and a moving point to show the movement
+        static_point = (675, 700)  #this was decided to be the origin point (anywhere within the box would do)
+        x = math.ceil(static_point[0] + delta_x)
+        y = math.ceil(static_point[1] + delta_y)
+
+        if x < 0:
+            x = 0
+        if y < 0:
+            y = 0
+        self.new_frame = cv2.circle(self.new_frame, static_point, 5, (0,0,255), 2)
+        self.new_frame = cv2.circle(self.new_frame, (x,y), 5, (0,255,255), -1)
 
 
 
