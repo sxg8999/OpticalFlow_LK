@@ -40,7 +40,7 @@ class PointGenerator():
                 y = top_left_y + (i*offset)
 
                 # print(str(x) + ", " + str(y))
-                static_point.append((x,y))
+                static_points.append((x,y))
                 moving_points.append([[x,y]])
 
         return static_points, moving_points
@@ -195,8 +195,8 @@ class Frames():
     def __init__(self):
         self.screen_grabber = mss.mss()
         self.window_size = {"top": 140, "left": 560, "width": 800, "height": 800} 
-        self.old_frame = np.array(self.screen_grabber(self.window_size))
-        self.old_gray_frame = cv2.cvtColor(old_frame, cv2.COLOR_BGR2GRAY)
+        self.old_frame = np.array(self.screen_grabber.grab((self.window_size)))
+        self.old_gray_frame = cv2.cvtColor(self.old_frame, cv2.COLOR_BGR2GRAY)
         
     
     def update_old(self):
@@ -209,8 +209,8 @@ class Frames():
         """
         grab another frame
         """
-        self.new_frame = np.array(self.screen_grabber(self.window_size))
-        self.new_gray_frame = cv2.cvtColor(new_frame, cv2.COLOR_BGR2GRAY)
+        self.new_frame = np.array(self.screen_grabber.grab((self.window_size)))
+        self.new_gray_frame = cv2.cvtColor(self.new_frame, cv2.COLOR_BGR2GRAY)
     
     def draw_info_box(self,delta_x, delta_y):
         """
@@ -232,7 +232,7 @@ class Frames():
 class Application():
 
     def run(self):
-        pg = Point_Generator()
+        pg = PointGenerator()
         computer = Computer()
         frames = Frames()
         
@@ -241,7 +241,7 @@ class Application():
         while True:
 
             frames.getNext()
-            new_moving_points, delta_x, delta_y = computer.compute(frames.old_gray_frame, frames.new_gray_frame,old_moving_points)
+            new_moving_points, delta_x, delta_y = computer.calc(frames.old_gray_frame, frames.new_gray_frame,old_moving_points)
             frames.update_old()
             frames.draw_info_box(delta_x, delta_y)
             old_moving_points = new_moving_points
