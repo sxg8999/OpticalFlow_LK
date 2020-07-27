@@ -245,16 +245,25 @@ class Frames():
 
 class Application():
 
+
     def run(self):
         pg = PointGenerator()
         computer = Computer()
         frames = Frames()
         
+        counter = 0 #This is the frame counter
         static_points, old_moving_points = pg.create_grid(300, (400,400)) 
 
         while True:
 
+            #Every 10 frames reset the points (This is to get rid of dead/bad points)
+            if counter >= 10:
+                static_points, old_moving_points = pg.create_grid(300, (400, 400))
+                counter = 0
+
             frames.getNext()
+            counter += 1
+
             new_moving_points, delta_x, delta_y = computer.calc(frames.old_gray_frame, frames.new_gray_frame,old_moving_points)
             frames.update_old()
             frames.draw_info_box(delta_x, delta_y)
@@ -262,6 +271,7 @@ class Application():
 
             cv2.imshow('frame',frames.new_frame)
 
+            #27 is the ESC Key (Press it to stop the application)
             if cv2.waitKey(1) == 27:
                 break
         cv2.destroyAllWindows()
