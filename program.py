@@ -16,11 +16,31 @@ import random
 # The Point_Generator class generates the points of interest
 # Other methods of generating points of interest can be used too
 class PointGenerator():
+    """
+    A class used to generate a grid point
+    """
     
     def create_grid(self, side_length: int, center_point: tuple):
         """
         create a grid of points with the center_point at the center of the grid
         and return it
+
+        Parameters
+        ----------
+        side_length: int
+            The side length of the the region of points (length and width of region)
+        center_point: tuple
+            The origin of the point grid system(the center of the region). The points
+            would be created around the center point
+
+        Returns
+        -------
+        static_points
+            a list of points that is used for reference purposes and doesn't move
+        
+        initial_points
+            a numpy array of feature points 
+
         """
 
         static_points = []
@@ -43,7 +63,9 @@ class PointGenerator():
                 static_points.append((x,y))
                 moving_points.append([[x,y]])
 
-        return static_points, np.array(moving_points, dtype = np.float32)
+        inital_points = np.array(moving_points, dtype = np.float32)
+
+        return static_points, initial_points
         
 
 
