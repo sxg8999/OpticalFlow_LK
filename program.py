@@ -17,7 +17,7 @@ import random
 # Other methods of generating points of interest can be used too
 class PointGenerator():
     
-    def create_grid(self, side_length, center_point):
+    def create_grid(self, side_length: int, center_point: tuple):
         """
         create a grid of points with the center_point at the center of the grid
         and return it
@@ -73,7 +73,7 @@ class Computer():
 class Ransac():
         
     
-    def calc(self, old_points_list, new_points_list):
+    def calc(self, old_points_list: list, new_points_list: list):
         """
             find the optimal movement in the x and y direction 
             and return it
@@ -122,7 +122,7 @@ class Ransac():
 
     
     
-    def pre_operation(self, old_points_list, new_points_list):
+    def pre_operation(self, old_points_list: list, new_points_list: list):
         """
             look at all the points and determine the direction of movement
             ***This function is not optimized thus reduces the frame rate signifcantly
@@ -213,7 +213,7 @@ class Frames():
         self.new_frame = np.array(self.screen_grabber.grab((self.window_size)))
         self.new_gray_frame = cv2.cvtColor(self.new_frame, cv2.COLOR_BGR2GRAY)
     
-    def draw_info_box(self,delta_x, delta_y):
+    def draw_info_box(self,delta_x: np.float32, delta_y: np.float32):
         """
         Draws a general optical flow on the new frame
         """
