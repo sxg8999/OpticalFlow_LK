@@ -22,7 +22,7 @@ class PointGenerator():
     
     def create_grid(self, side_length: int, center_point: tuple):
         """
-        create a grid of points with the center_point at the center of the grid
+        Creates a grid of points with the center_point at the center of the grid
         and return it
 
         Parameters
@@ -70,8 +70,19 @@ class PointGenerator():
 
 
 class Computer():
+    """
+    A wrapper class for calculating the optical flow of the points
+
+    Attributes
+    ----------
+    ransac : Ransac
+        A class that help filter out outliers and calculates a optimal answer
+    """
 
     def __init__(self):
+        """
+        Initial setup
+        """
 
         #setup LucasKanade parameters
         self.lkParams = dict( winSize  = (15,15),
@@ -80,14 +91,32 @@ class Computer():
         
         self.ransac = Ransac()
 
-    def calc(self, oldGrayFrame, newGrayFrame, points):
+    def calc(self, old_gray_frame, new_gray_frame, points):
         """
-            calculates the optical flow using Lucas Kanade and a modified RANSAC operation
+        Calculates the optical flow using Lucas Kanade and a modified RANSAC operation
+
+        Parameters
+        ----------
+        old_gray_frame
+            The previous frame that is grayscaled
+        new_gray_frame
+            A new frame that is grayscaled
+        points
+            The feature points
+
+        Returns
+        -------
+        new_points
+            New points that are calculated using optical flow analysis on the feature points
+        delta_x
+            Change of movement/flow in the x direction
+        delta_y
+            Change of movement/flow in the y direction
         """
 
-        newPoints,status,error = cv2.calcOpticalFlowPyrLK(oldGrayFrame, newGrayFrame, points, None, **(self.lkParams))
-        delta_x, delta_y = self.ransac.calc(points, newPoints)
-        return newPoints, delta_x, delta_y
+        new_points,status,error = cv2.calcOpticalFlowPyrLK old_gray_frame, new_gray_frame, points, None, **(self.lkParams))
+        delta_x, delta_y = self.ransac.calc(points, new_points)
+        return new_points, delta_x, delta_y
         
 
         
@@ -278,7 +307,7 @@ class Application():
 
         while True:
 
-            #Every 10 frames reset the points (This is to get rid of dead/bad points)
+            #Every 10 frames reset the points (This is to get rid of dead/bad tracking points)
             if counter >= 10:
                 static_points, old_moving_points = pg.create_grid(300, (400, 400))
                 counter = 0
