@@ -73,14 +73,14 @@ class Computer():
 class Ransac():
         
     
-    def calc(self, oldList, newList):
+    def calc(self, old_points_list, new_points_list):
         """
             find the optimal movement in the x and y direction 
             and return it
         """
 
         # size: is the amount of points that are going in the same general direction
-        direction, pointList, size = self.pre_operation(oldList, newList)
+        direction, points_list, size = self.pre_operation(old_points_list, new_points_list)
 
         #if there is not enough points to determine a general directions
         #then consider there to be no change between the two frames
@@ -106,8 +106,8 @@ class Ransac():
         # dist_1 is the magnitude of movement of a point in the current sample,
         #  while dist_2 is the magnitude of movement from a point in the testing list
         for index in sampleList:
-            dist_1,_,_ = pointList[index]
-            for item in pointList:
+            dist_1,_,_ = points_list[index]
+            for item in points_list:
                 dist_2,_,_ = item
                 diff = abs(dist_1-dist_2)       #get the absolute difference
                 if diff < threshold:
@@ -117,12 +117,12 @@ class Ransac():
                 bestModel = index
             
             inlierCount = 0
-        _, delta_x, delta_y = pointList[bestModel]
+        _, delta_x, delta_y = points_list[bestModel]
         return delta_x, delta_y
 
     
     
-    def pre_operation(self, oldList, newList):
+    def pre_operation(self, old_points_list, new_points_list):
         """
             look at all the points and determine the direction of movement
             ***This function is not optimized thus reduces the frame rate signifcantly
@@ -130,7 +130,7 @@ class Ransac():
         counter_dict = {"UPLEFT":0, "UPRIGHT":0, "DOWNLEFT":0, "DOWNRIGHT":0, "DOWN":0, "UP":0, "LEFT":0, "RIGHT":0}
         list_dict = {"UPLEFT":[], "UPRIGHT":[], "DOWNLEFT":[], "DOWNRIGHT":[], "DOWN":[], "UP":[], "LEFT":[], "RIGHT":[]}
 
-        for (p0,p1) in zip(oldList, newList):
+        for (p0,p1) in zip(old_points_list, new_points_list):
             x0,y0 = p0.ravel()
             x1, y1 = p1.ravel()
             diff_x = x1 - x0
@@ -206,7 +206,7 @@ class Frames():
         """
         self.old_gray_frame = self.new_gray_frame.copy()
     
-    def  getNext(self):
+    def  next(self):
         """
         grab another frame
         """
@@ -261,7 +261,7 @@ class Application():
                 static_points, old_moving_points = pg.create_grid(300, (400, 400))
                 counter = 0
 
-            frames.getNext()
+            frames.next()
             counter += 1
 
             new_moving_points, delta_x, delta_y = computer.calc(frames.old_gray_frame, frames.new_gray_frame,old_moving_points)
