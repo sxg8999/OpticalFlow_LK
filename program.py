@@ -364,9 +364,14 @@ class Frames():
 
 
 class Application():
-
+    """
+    A class used to make use of all the components
+    """
 
     def run(self):
+        """
+        Runs the Tracking App and close all windows upon application shutdown
+        """
         pg = PointGenerator()
         computer = Computer()
         frames = Frames()
