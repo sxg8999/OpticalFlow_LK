@@ -283,8 +283,29 @@ class Ransac():
 
 
 class Frames():
+    """
+    A class that grabs, updates, and draw on frames
+
+    Attributes
+    ----------
+    screen_grabber
+        A object that screenshots a region of the screen
+    window_size : dict
+        A dictionary that defines the desired region of the screen
+    old_frame
+        The previous frame
+    old_gray_frame
+        A grayscaled version of the previous frame
+    new_frame
+        The newly grabbed frame, or the current frame
+    new_gray_frame
+        A grayscaled version of the newly grabbed frame
+
+    """
+
 
     def __init__(self):
+
         self.screen_grabber = mss.mss()
         self.window_size = {"top": 140, "left": 560, "width": 800, "height": 800} 
         self.old_frame = np.array(self.screen_grabber.grab((self.window_size)))
@@ -293,7 +314,7 @@ class Frames():
     
     def update_old(self):
         """
-        updates the old frame with the new frame
+        Updates the old frame with the new frame
         """
         self.old_gray_frame = self.new_gray_frame.copy()
     
@@ -307,6 +328,14 @@ class Frames():
     def draw_info_box(self,delta_x: np.float32, delta_y: np.float32):
         """
         Draws a general optical flow on the new frame
+
+        Parameters
+        ----------
+        delta_x : np.float32
+            The changes in the x direction
+        delta_y : np.float32
+            The changes in the y direction
+
         """
         #Below are  numbers that can be changed to 
         #ones preference
