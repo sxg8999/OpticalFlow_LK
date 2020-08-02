@@ -93,7 +93,7 @@ class Computer():
 
     def calc(self, old_gray_frame, new_gray_frame, points):
         """
-        Calculates the optical flow using Lucas Kanade and a modified RANSAC operation
+        Calculates the optical flow using Lucas-Kanade with a modified RANSAC function
 
         Parameters
         ----------
@@ -126,8 +126,22 @@ class Ransac():
     
     def calc(self, old_points_list: list, new_points_list: list):
         """
-            find the optimal movement in the x and y direction 
-            and return it
+        Remove outliers and find the optimal movement in the x and y direction
+
+        Parameters
+        ----------
+        old_points_list
+            The feature point list of the old frame
+        new_points_list
+            The points calculated with optical flow
+        
+        Returns
+        -------
+        delta_x
+            Changes in the x direction
+        delta_y
+            Changes in the y direction
+
         """
 
         # size: is the amount of points that are going in the same general direction
@@ -174,9 +188,27 @@ class Ransac():
     
     
     def pre_operation(self, old_points_list: list, new_points_list: list):
-        """
-            look at all the points and determine the direction of movement
-            ***This function is not optimized thus reduces the frame rate signifcantly
+        """Isolate the good points from the bad points
+        Look at all the points and determine the direction of movement
+        ***This function is not optimized thus reduces the frame rate signifcantly
+
+        Parameters
+        ----------
+        old_points_list
+            The feature point list of the old frame
+        new_points_list
+            The points calculated with optical flow
+
+        
+        Returns
+        -------
+        best_guess
+            The best guessed direction of movement
+        best_points_list
+            All the points that agrees with the guess of the direction
+        num_of_points
+            The number of points in the best_points_list
+        
         """
         counter_dict = {"UPLEFT":0, "UPRIGHT":0, "DOWNLEFT":0, "DOWNRIGHT":0, "DOWN":0, "UP":0, "LEFT":0, "RIGHT":0}
         list_dict = {"UPLEFT":[], "UPRIGHT":[], "DOWNLEFT":[], "DOWNRIGHT":[], "DOWN":[], "UP":[], "LEFT":[], "RIGHT":[]}
@@ -230,15 +262,23 @@ class Ransac():
                 max_count = val
                 best_guess = key
 
-        # check confidence rating
+        
         confidence_rating = 0.0
+        
+
+        # check confidence rating
         if total != 0:
             confidence_rating = max_count/total
         
         if(confidence_rating >= confidence_target):
-            return best_guess, list_dict[best_guess], counter_dict[best_guess]
-        
-        return "NONE", [], 0   
+            best_points_list = list_dict[best_guess]
+            num_of_points = counter_dict[best_guess]
+        else:
+            best_guess = "NONE"
+            best_points_list = []
+            num_of_points = 0
+
+        return best_guess, best_points_list, num_of_points  
         
 
 
@@ -259,7 +299,7 @@ class Frames():
     
     def  next(self):
         """
-        grab another frame
+        Grabs another frame and update new_frame and new_gray_frame 
         """
         self.new_frame = np.array(self.screen_grabber.grab((self.window_size)))
         self.new_gray_frame = cv2.cvtColor(self.new_frame, cv2.COLOR_BGR2GRAY)
