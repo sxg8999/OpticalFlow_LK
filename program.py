@@ -1,5 +1,5 @@
 #
-# This is the main program
+# A application that tracks movements in a region of the screen
 #
 # Author: Steven Guan
 #
