@@ -20,15 +20,17 @@ class PointGenerator():
     A class used to generate a grid point
     """
     
-    def create_grid(self, side_length: int, center_point: tuple):
+    def create_grid(self, length:int, width: int, center_point: tuple):
         """
         Creates a grid of points with the center_point at the center of the grid
         and return it
 
         Parameters
         ----------
-        side_length: int
-            The side length of the the region of points (length and width of region)
+        length: int
+            The length of the region that stretches in the y direction
+        width: int
+            The width of the region that streches in the x direction
         center_point: tuple
             The origin of the point grid system(the center of the region). The points
             would be created around the center point
@@ -46,16 +48,18 @@ class PointGenerator():
         static_points = []
         moving_points = []
 
-        half_len = math.floor(side_length/2)
+        # half_len = math.floor(side_length/2)
         c_x,c_y = center_point
-        top_left_x = c_x - half_len
-        top_left_y = c_y - half_len
+        top_left_x = c_x - math.floor(width/2)
+        top_left_y = c_y - math.floor(length/2)
 
         offset = 20 # the gap between points
-        MAX_POINT_PER_ROW = math.floor(side_length/offset) + 1
+        # MAX_POINT_PER_ROW = math.floor(side_length/offset) + 1
+        MAX_POINT_PER_ROW = math.floor(width/offset) + 1            #Note: looks redundant
+        MAX_POINT_PER_COL = math.floor(length/offset) + 1
         print(MAX_POINT_PER_ROW)
         for i in range(MAX_POINT_PER_ROW):
-            for j in range(MAX_POINT_PER_ROW):
+            for j in range(MAX_POINT_PER_COL):
                 x = top_left_x + (j*offset) 
                 y = top_left_y + (i*offset)
 
