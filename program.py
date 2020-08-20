@@ -1,5 +1,5 @@
 #
-# A application that tracks movements in a region of the screen
+# A application that tracks movements in a region of the screen and displays it
 #
 # Author: Steven Guan
 #
@@ -114,7 +114,7 @@ class Computer():
             Change of movement/flow in the y direction
         """
 
-        new_points,status,error = cv2.calcOpticalFlowPyrLK old_gray_frame, new_gray_frame, points, None, **(self.lkParams))
+        new_points,status,error = cv2.calcOpticalFlowPyrLK(old_gray_frame, new_gray_frame, points, None, **(self.lkParams))
         delta_x, delta_y = self.ransac.calc(points, new_points)
         return new_points, delta_x, delta_y
         
