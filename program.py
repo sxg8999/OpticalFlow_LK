@@ -57,7 +57,7 @@ class PointGenerator():
         # MAX_POINT_PER_ROW = math.floor(side_length/offset) + 1
         MAX_POINT_PER_ROW = math.floor(width/offset) + 1            #Note: looks redundant
         MAX_POINT_PER_COL = math.floor(length/offset) + 1
-        print(MAX_POINT_PER_ROW)
+        # print(MAX_POINT_PER_ROW)
         for i in range(MAX_POINT_PER_ROW):
             for j in range(MAX_POINT_PER_COL):
                 x = top_left_x + (j*offset) 
@@ -67,7 +67,7 @@ class PointGenerator():
                 static_points.append((x,y))
                 moving_points.append([[x,y]])
 
-        inital_points = np.array(moving_points, dtype = np.float32)
+        initial_points = np.array(moving_points, dtype = np.float32)
 
         return static_points, initial_points
         
@@ -87,7 +87,6 @@ class Computer():
         """
         Initial setup
         """
-
         #setup LucasKanade parameters
         self.lkParams = dict( winSize  = (15,15),
                   maxLevel = 5,
@@ -381,13 +380,13 @@ class Application():
         frames = Frames()
         
         counter = 0 #This is the frame counter
-        static_points, old_moving_points = pg.create_grid(300, (400,400)) 
+        static_points, old_moving_points = pg.create_grid(300, 300, (400,400)) 
 
         while True:
 
             #Every 10 frames reset the points (This is to get rid of dead/bad tracking points)
             if counter >= 10:
-                static_points, old_moving_points = pg.create_grid(300, (400, 400))
+                static_points, old_moving_points = pg.create_grid(300, 300, (400, 400))
                 counter = 0
 
             frames.next()
