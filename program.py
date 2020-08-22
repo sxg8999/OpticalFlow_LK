@@ -368,6 +368,9 @@ class Source():
     """
     A class used to represent the source of the image/frames
     """
+    def __init__(self, old, old_gray):
+        self.old = old
+        self.old_gray = old
         
     @abstractmethod
     def update_old(self):
@@ -384,7 +387,15 @@ class ScreenSource(Source):
     A class used to represent source obtained from screen
     """
 
-    def __init__(self, srcName:str):
+    def __init__(self):
+        pass
+
+    def update_old(self):
+        pass
+
+    def next(self):
+        pass
+
 
 
 
