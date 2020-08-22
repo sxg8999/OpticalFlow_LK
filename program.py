@@ -10,6 +10,7 @@ import cv2
 import mss
 import numpy as np
 import random
+from abc import ABC, abstractmethod             
 
 
 
@@ -367,16 +368,23 @@ class Source():
     """
     A class used to represent the source of the image/frames
     """
-
-    def __init__(self, srcName:str, requirements:dict):
-        pass
-
+        
+    @abstractmethod
     def update_old(self):
         pass
 
+    @abstractmethod
     def next(self):
         pass
 
+
+    
+class ScreenSource(Source):
+    """
+    A class used to represent source obtained from screen
+    """
+
+    def __init__(self, srcName:str):
 
 
 
