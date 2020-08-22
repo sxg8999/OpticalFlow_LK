@@ -307,10 +307,10 @@ class Frames():
     """
 
 
-    def __init__(self):
+    def __init__(self, window_size):
 
         self.screen_grabber = mss.mss()
-        self.window_size = {"top": 140, "left": 560, "width": 800, "height": 800} 
+        self.window_size = window_size
         self.old_frame = np.array(self.screen_grabber.grab((self.window_size)))
         self.old_gray_frame = cv2.cvtColor(self.old_frame, cv2.COLOR_BGR2GRAY)
         
@@ -363,6 +363,22 @@ class Frames():
 
 
 
+class Source():
+    """
+    A class used to represent the source of the image/frames
+    """
+
+    def __init__(self, srcName:str, requirements:dict):
+        pass
+
+    def update_old(self):
+        pass
+
+    def next(self):
+        pass
+
+
+
 
 
 
@@ -370,6 +386,9 @@ class Application():
     """
     A class used to make use of all the components
     """
+
+    def __init__(self):
+        pass
 
     def run(self):
         """
@@ -407,6 +426,9 @@ class Application():
 
 
 def main():
+    window_size = {"top": 140, "left": 560, "width": 800, "height": 800}
+    frames = Frame(window_size)
+    
     app = Application()
     app.run()
     print("Application Closed!!!")
