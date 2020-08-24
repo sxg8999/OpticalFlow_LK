@@ -409,6 +409,31 @@ class ScreenSource(Source):
 
 
 
+class InfoBox():
+    """
+    A class that is responsible for drawing all the information onto a frame
+    """
+
+    def __init__(self, start_corner, end_corner):
+        self.start_corner = start_corner
+        self.end_corner = end_corner
+    
+    def draw(self, delta_x, delta_y, frame):
+        resultFrame = cv2.rectangle(frame, self.start_corner, self.end_corner,(0,255,0),3)
+
+        #create a static point and a moving point to show the movement
+        static_point = (675, 700)  #this was decided to be the origin point (anywhere within the box would do)
+        x = math.ceil(static_point[0] + delta_x)
+        y = math.ceil(static_point[1] + delta_y)
+
+        if x < 0:
+            x = 0
+        if y < 0:
+            y = 0
+        resultFrame = cv2.circle(self.new_frame, static_point, 5, (0,0,255), 2)
+        resultFrame = cv2.circle(self.new_frame, (x,y), 5, (0,255,255), -1)
+
+        return resultFrame
 
 
 class Application():
