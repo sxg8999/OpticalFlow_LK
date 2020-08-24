@@ -321,6 +321,7 @@ class Frames():
         Updates the old frame with the new frame
         """
         self.old_gray_frame = self.new_gray_frame.copy()
+        
     
     def  next(self):
         """
@@ -368,33 +369,42 @@ class Source():
     """
     A class used to represent the source of the image/frames
     """
-    def __init__(self, old, old_gray):
-        self.old = old
-        self.old_gray = old
-        
-    @abstractmethod
-    def update_old(self):
-        pass
+    def __init__(self, old_frame, old_gray_frame):
+        self.old_frame = old_frame
+        self.old_gray_frame = old
+        self.new_frame = []
+        self.new_gray_frame = []
+
 
     @abstractmethod
     def next(self):
         pass
+    
+    
+    def updateOld(self):
+        self.old_gray_frame = self.new_gray_frame.copy()
 
 
     
 class ScreenSource(Source):
     """
-    A class used to represent source obtained from screen
+    A class used to represent source obtained from the screen
     """
 
-    def __init__(self):
-        pass
-
-    def update_old(self):
-        pass
+    def __init__(self, window_size):
+        self.screen_grabber = mss.mss()
+        self.window_size = window_size
+        old_frame = np.array(self.screen_grabber.grab(self.window_size))
+        old_gray_frame = cv2.cvtColor(self.old_frame,cv2.COLOR_BGR2GRAY)
+        super().__init__(old_frame, old_gray_frame)
+        
 
     def next(self):
-        pass
+        """
+        Grabs another frame and update new_frame and new_gray_frame 
+        """
+        self.new_frame = np.array(self.screen_grabber.grab(self.window_size))
+        self.new_gray_frame = cv2.cvtColor(self.new_frame, cv2.COLOR_BGR2GRAY)
 
 
 
@@ -415,7 +425,7 @@ class Application():
         """
         pg = PointGenerator()
         computer = Computer()
-        frames = Frames()
+        frames = Frames({"top": 140, "left": 560, "width": 800, "height": 800})
         
         counter = 0 #This is the frame counter
         static_points, old_moving_points = pg.create_grid(300, 300, (400,400)) 
@@ -446,7 +456,7 @@ class Application():
 
 def main():
     window_size = {"top": 140, "left": 560, "width": 800, "height": 800}
-    frames = Frame(window_size)
+    frames = Frames(window_size)
     
     app = Application()
     app.run()
