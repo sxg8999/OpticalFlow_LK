@@ -286,84 +286,6 @@ class Ransac():
         
 
 
-class Frames():
-    """
-    A class that grabs, updates, and draw on frames
-
-    Attributes
-    ----------
-    screen_grabber
-        A object that screenshots a region of the screen
-    window_size : dict
-        A dictionary that defines the desired region of the screen
-    old_frame
-        The previous frame
-    old_gray_frame
-        A grayscaled version of the previous frame
-    new_frame
-        The newly grabbed frame, or the current frame
-    new_gray_frame
-        A grayscaled version of the newly grabbed frame
-
-    """
-
-
-    def __init__(self, window_size):
-
-        self.screen_grabber = mss.mss()
-        self.window_size = window_size
-        self.old_frame = np.array(self.screen_grabber.grab((self.window_size)))
-        self.old_gray_frame = cv2.cvtColor(self.old_frame, cv2.COLOR_BGR2GRAY)
-        
-    
-    def update_old(self):
-        """
-        Updates the old frame with the new frame
-        """
-        self.old_gray_frame = self.new_gray_frame.copy()
-        
-    
-    def  next(self):
-        """
-        Grabs another frame and update new_frame and new_gray_frame 
-        """
-        self.new_frame = np.array(self.screen_grabber.grab((self.window_size)))
-        self.new_gray_frame = cv2.cvtColor(self.new_frame, cv2.COLOR_BGR2GRAY)
-    
-    def draw_info_box(self,delta_x: np.float32, delta_y: np.float32):
-        """
-        Draws a general optical flow on the new frame
-
-        Parameters
-        ----------
-        delta_x : np.float32
-            The changes in the x direction
-        delta_y : np.float32
-            The changes in the y direction
-
-        """
-        #Below are  numbers that can be changed to 
-        #ones preference
-
-        #defining the corners to form the info box
-        top_corner = (600,600)
-        bottom_corner = (750,800)
-        self.new_frame = cv2.rectangle(self.new_frame, top_corner,bottom_corner,(0,255,0), 3)
-
-
-        #create a static point and a moving point to show the movement
-        static_point = (675, 700)  #this was decided to be the origin point (anywhere within the box would do)
-        x = math.ceil(static_point[0] + delta_x)
-        y = math.ceil(static_point[1] + delta_y)
-
-        if x < 0:
-            x = 0
-        if y < 0:
-            y = 0
-        self.new_frame = cv2.circle(self.new_frame, static_point, 5, (0,0,255), 2)
-        self.new_frame = cv2.circle(self.new_frame, (x,y), 5, (0,255,255), -1)
-
-
 
 class Source():
     """
@@ -382,7 +304,22 @@ class Source():
     
 class ScreenSource(Source):
     """
-    A class used to represent source obtained from the screen
+    A class used to represent a screen frame source
+
+    Attributes
+    ----------
+    screen_grabber
+        A object that screenshots a region of the screen
+    window_size : dict
+        A dictionary that defines the desired region of the screen
+    old_frame
+        The previous frame
+    old_gray_frame
+        A grayscaled version of the previous frame
+    new_frame
+        The newly grabbed frame, or the current frame
+    new_gray_frame
+        A grayscaled version of the newly grabbed frame
     """
 
     def __init__(self, window_size):
