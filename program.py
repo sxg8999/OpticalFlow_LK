@@ -369,20 +369,14 @@ class Source():
     """
     A class used to represent the source of the image/frames
     """
-    def __init__(self, old_frame, old_gray_frame):
-        self.old_frame = old_frame
-        self.old_gray_frame = old
-        self.new_frame = []
-        self.new_gray_frame = []
-
 
     @abstractmethod
     def next(self):
         pass
     
-    
+    @abstractmethod
     def updateOld(self):
-        self.old_gray_frame = self.new_gray_frame.copy()
+        pass
 
 
     
@@ -394,9 +388,10 @@ class ScreenSource(Source):
     def __init__(self, window_size):
         self.screen_grabber = mss.mss()
         self.window_size = window_size
-        old_frame = np.array(self.screen_grabber.grab(self.window_size))
-        old_gray_frame = cv2.cvtColor(self.old_frame,cv2.COLOR_BGR2GRAY)
-        super().__init__(old_frame, old_gray_frame)
+        self.old_frame = np.array(self.screen_grabber.grab(self.window_size))
+        self.old_gray_frame = cv2.cvtColor(self.old_frame,cv2.COLOR_BGR2GRAY)
+        self.new_frame = []
+        self.new_gray_frame = []
         
 
     def next(self):
@@ -406,7 +401,8 @@ class ScreenSource(Source):
         self.new_frame = np.array(self.screen_grabber.grab(self.window_size))
         self.new_gray_frame = cv2.cvtColor(self.new_frame, cv2.COLOR_BGR2GRAY)
 
-
+    def updateOld(self):
+        self.old_gray_frame = self.new_gray_frame.copy()
 
 
 class InfoBox():
@@ -430,8 +426,8 @@ class InfoBox():
             x = 0
         if y < 0:
             y = 0
-        resultFrame = cv2.circle(self.new_frame, static_point, 5, (0,0,255), 2)
-        resultFrame = cv2.circle(self.new_frame, (x,y), 5, (0,255,255), -1)
+        resultFrame = cv2.circle(frame, static_point, 5, (0,0,255), 2)
+        resultFrame = cv2.circle(frame, (x,y), 5, (0,255,255), -1)
 
         return resultFrame
 
@@ -441,8 +437,9 @@ class Application():
     A class used to make use of all the components
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, source, infobox):
+        self.source = source
+        self.infobox = infobox
 
     def run(self):
         """
@@ -450,7 +447,7 @@ class Application():
         """
         pg = PointGenerator()
         computer = Computer()
-        frames = Frames({"top": 140, "left": 560, "width": 800, "height": 800})
+        # frames = Frames({"top": 140, "left": 560, "width": 800, "height": 800})
         
         counter = 0 #This is the frame counter
         static_points, old_moving_points = pg.create_grid(300, 300, (400,400)) 
@@ -462,15 +459,20 @@ class Application():
                 static_points, old_moving_points = pg.create_grid(300, 300, (400, 400))
                 counter = 0
 
-            frames.next()
+            # frames.next()
+            self.source.next()
             counter += 1
 
-            new_moving_points, delta_x, delta_y = computer.calc(frames.old_gray_frame, frames.new_gray_frame,old_moving_points)
-            frames.update_old()
-            frames.draw_info_box(delta_x, delta_y)
+            new_moving_points, delta_x, delta_y = computer.calc(self.source.old_gray_frame, self.source.new_gray_frame,old_moving_points)
+            # frames.update_old()
+            self.source.updateOld()
+
+            frame = self.infobox.draw(delta_x, delta_y, self.source.new_frame)
+
+            # frames.draw_info_box(delta_x, delta_y)
             old_moving_points = new_moving_points
 
-            cv2.imshow('frame',frames.new_frame)
+            cv2.imshow('frame',frame)
 
             #27 is the ESC Key (Press it to stop the application)
             if cv2.waitKey(1) == 27:
@@ -481,9 +483,13 @@ class Application():
 
 def main():
     window_size = {"top": 140, "left": 560, "width": 800, "height": 800}
+
+    infobox = InfoBox((600,600),(750,800))
+    source = ScreenSource(window_size)
+
     frames = Frames(window_size)
     
-    app = Application()
+    app = Application(source,infobox)
     app.run()
     print("Application Closed!!!")
 
