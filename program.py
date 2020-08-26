@@ -323,6 +323,9 @@ class ScreenSource(Source):
     """
 
     def __init__(self, window_size):
+        """
+        Initial setup
+        """
         self.screen_grabber = mss.mss()
         self.window_size = window_size
         self.old_frame = np.array(self.screen_grabber.grab(self.window_size))
@@ -339,19 +342,51 @@ class ScreenSource(Source):
         self.new_gray_frame = cv2.cvtColor(self.new_frame, cv2.COLOR_BGR2GRAY)
 
     def updateOld(self):
+        """
+        Updates the old gray frame with the new gray frame
+        """
         self.old_gray_frame = self.new_gray_frame.copy()
 
 
 class InfoBox():
     """
     A class that is responsible for drawing all the information onto a frame
+
+    Attributes
+    ----------
+    start_corner: tuple
+        The x and y coordinate for the top corner of the info box
+    end_corner: tuple
+        The x and y coordinate for the bottom corner of the info box
     """
 
-    def __init__(self, start_corner, end_corner):
+
+    def __init__(self, start_corner: tuple, end_corner: tuple):
+        """
+        Initial setup
+        """
         self.start_corner = start_corner
         self.end_corner = end_corner
     
-    def draw(self, delta_x, delta_y, frame):
+    def draw(self, delta_x: float, delta_y: float, frame):
+        """
+        Draw the movement changes on the frame
+
+        Parameters
+        ----------
+        delta_x: float
+            The change in the x direction
+        delta_y: float
+            The change in the y direction
+        frame: list
+            The frame to be drawn on
+        
+        Returns
+        -------
+        resultFrame: list
+            The resulting frame after drawing the changes
+        """
+
         resultFrame = cv2.rectangle(frame, self.start_corner, self.end_corner,(0,255,0),3)
 
         #create a static point and a moving point to show the movement
@@ -423,8 +458,6 @@ def main():
 
     infobox = InfoBox((600,600),(750,800))
     source = ScreenSource(window_size)
-
-    frames = Frames(window_size)
     
     app = Application(source,infobox)
     app.run()
